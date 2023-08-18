@@ -6,6 +6,7 @@ use App\Filament\Resources\NavigationResource\Pages;
 use App\Filament\Resources\NavigationResource\RelationManagers;
 use App\Models\Navigation;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -17,14 +18,20 @@ class NavigationResource extends Resource
 {
     protected static ?string $model = Navigation::class;
 
+    protected static ?string $navigationLabel = 'Hauptnavigation';
+
+    protected static ?string $label = "Navigationspunkt";
+    protected static ?string $pluralLabel = "Hauptnavigation";
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('parent_id')
-                    ->numeric(),
+                Select::make('parent_id')
+                    ->relationship(name: 'parent', titleAttribute: 'href')
+                    ->label('Oberpunkt'),
                 Forms\Components\TextInput::make('title')
                     ->required()
                     ->maxLength(255),
@@ -38,9 +45,8 @@ class NavigationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('parent_id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('parent.href')
+                    ->label('Oberpunkt'),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('href')
@@ -69,14 +75,14 @@ class NavigationResource extends Resource
                 Tables\Actions\CreateAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -84,5 +90,5 @@ class NavigationResource extends Resource
             'create' => Pages\CreateNavigation::route('/create'),
             'edit' => Pages\EditNavigation::route('/{record}/edit'),
         ];
-    }    
+    }
 }

@@ -9,6 +9,7 @@ use Filament\Resources\Pages\ListRecords;
 class ListFaqs extends ListRecords
 {
     protected static string $resource = FaqResource::class;
+    protected static ?string $navigationLabel = "FAQ";
 
     protected function getHeaderActions(): array
     {

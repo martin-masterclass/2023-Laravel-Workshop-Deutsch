@@ -6,9 +6,11 @@ use App\Filament\Resources\FaqResource\Pages;
 use App\Filament\Resources\FaqResource\RelationManagers;
 use App\Models\Faq;
 use Filament\Forms;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -17,7 +19,9 @@ class FaqResource extends Resource
 {
     protected static ?string $model = Faq::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'FAQ';
+
+    protected static ?string $navigationIcon = 'heroicon-o-question-mark-circle';
 
     public static function form(Form $form): Form
     {
@@ -26,10 +30,14 @@ class FaqResource extends Resource
                 Forms\Components\TextInput::make('question')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('answer')
+                RichEditor::make('answer')
                     ->required()
                     ->maxLength(65535)
-                    ->columnSpanFull(),
+                    ->columns([
+                        'sm' => 1,
+                        'lg' => 2,
+                        '2xl' => 1,
+                    ]),
             ]);
     }
 
@@ -37,8 +45,19 @@ class FaqResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('question')
-                    ->searchable(),
+                TextColumn::make('question')
+                    ->searchable()->sortable()->label('Frage'),
+                TextColumn::make('answer')
+                    ->searchable()->sortable()->label('Antwort')
+                    ->limit(50)
+                    ->tooltip(function (TextColumn $column): ?string {
+                        $state = $column->getState();
+                        if (strlen($state) <= $column->getCharacterLimit()) {
+                            return null;
+                        }
+                        // Only render the tooltip if the column content exceeds the length limit.
+                        return $state;
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -64,14 +83,14 @@ class FaqResource extends Resource
                 Tables\Actions\CreateAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -80,5 +99,5 @@ class FaqResource extends Resource
             'view' => Pages\ViewFaq::route('/{record}'),
             'edit' => Pages\EditFaq::route('/{record}/edit'),
         ];
-    }    
+    }
 }
