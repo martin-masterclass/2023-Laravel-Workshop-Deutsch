@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Corporate Page</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ config('app.name', 'Laravel') }}</title>
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         /** CSS Navi */
         .parent {
@@ -66,7 +69,7 @@
     <header class="bg-blue-600 text-white p-4 sticky top-0 z-50">
         <div class="flex justify-between items-center">
             <div class="flex">
-                <h1 class="text-xl font-bold">Unternehmensname</h1>
+                <h1 class="text-xl font-bold">{{ config('app.name', 'Laravel') }}</h1>
                 <!-- Navigation -->
                 <ul class="ml-12" id="menu">
                     <li class="parent"><a href="#">Oberpunkt 1</a>
@@ -99,7 +102,7 @@
 
     <!-- Footer -->
     <footer class="bg-blue-600 text-white p-4 mt-4">
-        <p>© 2023 Unternehmensname. Alle Rechte vorbehalten.</p>
+        <p>© <?=date("Y")?> {{ config('app.name', 'Laravel') }}. Alle Rechte vorbehalten. Adresse: {{ config('company.address') }}</p>
     </footer>
 
 </div>
