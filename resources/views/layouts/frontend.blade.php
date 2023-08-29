@@ -8,57 +8,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>
-        /** CSS Navi */
-        .parent {
-            display: block;
-            position: relative;
-            float: left;
-            line-height: 30px;
-            background-color: #4FA0D8;
-            border-right: #CCC 1px solid;
-        }
 
-        .parent a {
-            margin: 10px;
-            color: #FFFFFF;
-            text-decoration: none;
-        }
-
-        .parent:hover>ul {
-            display: block;
-            position: absolute;
-        }
-
-        .child {
-            display: none;
-        }
-
-        .child li {
-            background-color: #E4EFF7;
-            line-height: 30px;
-            border-bottom: #CCC 1px solid;
-            border-right: #CCC 1px solid;
-            width: 100%;
-        }
-
-        .child li a {
-            color: #000000;
-        }
-
-        ul {
-            list-style: none;
-            margin: 0;
-            padding: 0px;
-            min-width: 10em;
-        }
-
-        ul ul ul {
-            left: 100%;
-            top: 0;
-            margin-left: 1px;
-        }
-    </style>
 </head>
 <body class="bg-gray-400 flex flex-col">
 
@@ -71,7 +21,18 @@
             <div class="flex">
                 <h1 class="text-xl font-bold">{{ config('app.name', 'Laravel') }}</h1>
                 <!-- Navigation -->
-                <ul class="ml-12" id="menu">
+                <ul id="menu" class="ml-12" {{ $attributes }}>
+                    @foreach ($navigation as $item)
+                        <li class="pr-1 {{ $item->children->isEmpty() ? '' : 'parent' }}">
+                            <a href="{{ $item->href }}">{{ $item->title }}</a>
+                            @if (!$item->children->isEmpty())
+                                <span class="expand">»</span>
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
+<!--
+                <ul class="ml-12" >
                     <li class="parent"><a href="#">Oberpunkt 1</a>
                         <ul class="child">
                             <li class="parent"><a href="#">Unterpunkt 1.1 <span class="expand">»</span></a>
@@ -92,6 +53,7 @@
                     <li class="parent"><a href="#">Oberpunkt 2</a></li>
                     <li class="parent"><a href="#">Oberpunkt 3</a></li>
                 </ul>
+                -->
             </div>
 
             <a href="/login" class="bg-white text-blue-600 px-4 py-2 rounded">Login</a>
